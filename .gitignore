@@ -42,7 +42,7 @@ repo/
 ### Local runtime data ###
 logs/
 *.log
-config/
+/config/
 world/
 saves/
 backups/
