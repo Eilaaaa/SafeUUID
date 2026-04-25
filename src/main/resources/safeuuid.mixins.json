@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "cn.alini.safeuuid.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "server.PlayerListMixin",
+    "server.ServerLoginMixin",
+    "protocol.ServerboundCustomQueryAnswerPacketMixin"
+  ],
+  "client": [
+    "client.ClientHandshakeMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
