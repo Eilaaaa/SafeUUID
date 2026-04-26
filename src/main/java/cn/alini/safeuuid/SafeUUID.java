@@ -3,10 +3,8 @@ package cn.alini.safeuuid;
 import cn.alini.safeuuid.command.SafeUUIDCommands;
 import cn.alini.safeuuid.config.SafeUuidConfig;
 import com.mojang.logging.LogUtils;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
@@ -23,9 +21,6 @@ public final class SafeUUID {
         modEventBus.addListener(SafeUuidConfig::onLoad);
         NeoForge.EVENT_BUS.addListener(this::registerCommands);
         LOGGER.info("[SafeUUID] version {} loaded", modContainer.getModInfo().getVersion());
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            debugLog("[SafeUUID] running on client distribution");
-        }
     }
 
     public static void debugLog(String message, Object... arguments) {

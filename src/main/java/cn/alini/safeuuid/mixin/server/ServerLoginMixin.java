@@ -29,7 +29,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import javax.annotation.Nullable;
@@ -64,6 +63,10 @@ public abstract class ServerLoginMixin {
     private LoginAuthState safeuuid$authState;
 
     @Unique
+    @Nullable
+    private GameProfile safeuuid$requestedProfile;
+
+    @Unique
     private boolean safeuuid$authQuerySent;
 
     @Unique
@@ -96,12 +99,13 @@ public abstract class ServerLoginMixin {
 
         SafeUUID.debugLog("[SafeUUID] auth state recorded after timeout fallback");
         this.safeuuid$authQueryCompleted = true;
-        this.safeuuid$invokeFinishLoginAndWaitForClient(this.authenticatedProfile);
+        this.safeuuid$invokeFinishLoginAndWaitForClient(this.safeuuid$resolveLoginProfile(this.safeuuid$fallbackProfile()));
     }
 
     @Inject(method = "finishLoginAndWaitForClient", at = @At("HEAD"), cancellable = true)
     private void safeuuid$gateFinishLogin(GameProfile profile, CallbackInfo ci) {
         if (!this.safeuuid$authQuerySent) {
+            this.safeuuid$requestedProfile = profile;
             int txId = ThreadLocalRandom.current().nextInt(1, Integer.MAX_VALUE);
             String serverId = UUID.randomUUID().toString().replace("-", "");
             this.safeuuid$authState = new LoginAuthState(txId, serverId);
@@ -160,7 +164,7 @@ public abstract class ServerLoginMixin {
 
         SafeUUID.debugLog("[SafeUUID] auth state recorded");
         this.safeuuid$authQueryCompleted = true;
-        this.safeuuid$invokeFinishLoginAndWaitForClient(this.authenticatedProfile);
+        this.safeuuid$invokeFinishLoginAndWaitForClient(this.safeuuid$resolveLoginProfile(this.safeuuid$fallbackProfile()));
         ci.cancel();
     }
 
@@ -288,8 +292,19 @@ public abstract class ServerLoginMixin {
         return null;
     }
 
-    @ModifyVariable(method = "finishLoginAndWaitForClient", at = @At("HEAD"), argsOnly = true)
-    private GameProfile safeuuid$applyPremiumProfile(GameProfile profile) {
+    @Unique
+    private GameProfile safeuuid$fallbackProfile() {
+        if (this.authenticatedProfile != null) {
+            return this.authenticatedProfile;
+        }
+        if (this.safeuuid$requestedProfile != null) {
+            return this.safeuuid$requestedProfile;
+        }
+        return new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + this.requestedUsername).getBytes(java.nio.charset.StandardCharsets.UTF_8)), this.requestedUsername);
+    }
+
+    @Unique
+    private GameProfile safeuuid$resolveLoginProfile(GameProfile profile) {
         if (this.safeuuid$authState == null
                 || !Boolean.TRUE.equals(this.safeuuid$authState.clientAuthOk())
                 || !this.safeuuid$authState.hasJoinedChecked()

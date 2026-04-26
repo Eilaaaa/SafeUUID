@@ -8,6 +8,7 @@ public final class SafeUuidConfig {
     public static final ModConfigSpec SPEC;
     private static final ModConfigSpec.BooleanValue DEBUG;
     public static final Auth AUTH;
+    private static volatile boolean loaded;
 
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -30,6 +31,7 @@ public final class SafeUuidConfig {
             return;
         }
 
+        loaded = true;
         SafeUUID.LOGGER.info("[SafeUUID] config loaded");
         SafeUUID.LOGGER.info("[SafeUUID] debug={}", debug());
         SafeUUID.LOGGER.info("[SafeUUID] timeoutMs={}", AUTH.timeoutMs());
@@ -42,7 +44,7 @@ public final class SafeUuidConfig {
     }
 
     public static boolean debug() {
-        return DEBUG.get();
+        return loaded && DEBUG.get();
     }
 
     public static final class Auth {

@@ -1,14 +1,15 @@
 # SafeUUID
 
-SafeUUID 是一个面向 **Minecraft 1.21.1 / NeoForge 21.1.227** 的双端模组。
+**当前版本：v0.2.0**
+
+SafeUUID 是一个面向 **Minecraft 1.21.1 / NeoForge 21.1.219+** 的双端模组。
 
 它的目标是在 `online-mode=false` 的服务器中，为能够通过正版验证的玩家恢复并使用其 **正版 UUID / GameProfile**，同时保留离线玩家进入服务器的兜底能力。
 
-SafeUUID 的目标体验参考了 TrueUUID 的思路：在离线服务器环境中尽量避免正版玩家 UUID 被离线 UUID 分叉，并提供已知正版名字保护、离线兜底策略和数据迁移工具。当前项目针对 **NeoForge 1.21.1** 进行了适配实现。
+SafeUUID 的目标体验参考了 TrueUUID 的思路：在离线服务器环境中尽量避免正版玩家 UUID 被离线 UUID 分叉，并提供已知正版名字保护、离线兜底策略和数据迁移工具。当前项目针对 **Minecraft 1.21.1 + NeoForge 21.1.x** 进行了适配实现。
 
 > [!NOTE]
-> 本项目由作者在 AI 辅助下完成开发与整理。  
-> 尽管已经进行了构建、测试和功能验证，但仍可能存在潜在问题或未覆盖到的兼容性情况。  
+> v0.2.0 是兼容性增强版本：编译基线已下调到 NeoForge `21.1.219`，并更接近兼容 `21.1.219` 及之后的 `21.1.x` 小版本。不同整合包和网络环境仍建议实测。
 
 ## 功能特性
 
@@ -39,7 +40,7 @@ SafeUUID 的目标体验参考了 TrueUUID 的思路：在离线服务器环境�
 ## 运行环境
 
 - Minecraft：`1.21.1`
-- NeoForge：`21.1.227`
+- NeoForge：tested on `21.1.219` and `21.1.227`，目标为 `21.1.219` 及之后的 `21.1.x` 小版本
 - Java：`21`
 - 安装方式：客户端和服务端均需安装 SafeUUID
 
@@ -320,7 +321,8 @@ debug = true
 
 ## 已知限制与兼容性说明
 
-- SafeUUID 当前主要目标环境是 Minecraft `1.21.1` + NeoForge `21.1.227`。
+- SafeUUID 当前主要目标环境是 Minecraft `1.21.1` + NeoForge `21.1.219` 及之后的 `21.1.x` 小版本。
+- v0.2.0 已将编译基线下调到 NeoForge `21.1.219`，并减少了一个较脆弱的登录 mixin 注入路径。
 - 大型整合包中建议实测，尤其是包含登录流程、网络协议、账号系统或代理桥接相关模组时。
 - 某些网络层、协议层、跨端桥接或登录阶段修改类模组可能影响 SafeUUID 的认证请求和响应流程。
 - `recentIpGrace` 是可用性容错功能，不是强安全机制。共享 IP 或代理环境中请谨慎使用。
@@ -355,4 +357,4 @@ build/libs
 - 感谢 TrueUUID 提供的思路和目标体验参考。SafeUUID 在此基础上针对 NeoForge 1.21.1 的登录阶段、配置系统和数据迁移需求进行了适配实现。
 - Mojang authlib and session API.
 - Sponge Mixin.
-- ForgeGradle.
+- NeoForge / NeoGradle.
